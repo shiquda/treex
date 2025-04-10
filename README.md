@@ -1,4 +1,4 @@
-# 🌳 Treex
+# 🌳❌ Treex
 
 Treex is a powerful command-line tool for displaying directory structures in various formats. It provides multiple output formats and flexible filtering options to help you visualize your project structure.
 
@@ -19,6 +19,10 @@ Treex is a powerful command-line tool for displaying directory structures in var
   - 🎯 Customize output format
 
 ## 📦 Installation
+
+Download the pre-build binary from the [releases](https://github.com/shiquda/treex/releases), and add it to your PATH.
+
+Or, if you want to build it yourself with go:
 
 ```bash
 go install github.com/shiquda/treex@latest
@@ -180,3 +184,7 @@ treex -m 3 -f indent
         3.go
         README_test.md
 ```
+
+## ♥️ Contribution
+
+The project is in its early stages of development. Any form of assistance is welcome, including raising issues, creating PRs, or giving it a STAR⭐!
