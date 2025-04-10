@@ -23,7 +23,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v4
         with:
-          go-version: "1.22"
+          go-version: "1.23.8"
 
       # 构建二进制文件
       - name: Build Binary
