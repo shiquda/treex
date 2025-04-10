@@ -1,0 +1,56 @@
+name: Build and Release Go Project
+
+on:
+  push:
+    tags:
+      - "v*" # 仅在推送标签时触发
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        goos: [linux, windows, darwin]
+        goarch: [amd64, arm64]
+
+    steps:
+      # 检出代码
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # 设置 Go 环境
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.22"
+
+      # 构建二进制文件
+      - name: Build Binary
+        run: |
+          mkdir -p dist/${{ matrix.goos }}-${{ matrix.goarch }}
+          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o dist/${{ matrix.goos }}-${{ matrix.goarch }}/app
+
+      # 上传构建产物供后续使用（可选）
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.goos }}-${{ matrix.goarch }}
+          path: dist/${{ matrix.goos }}-${{ matrix.goarch }}
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      # 检出代码
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # 发布到 GitHub Releases
+      - name: Create Release and Upload Assets
+        uses: softprops/action-gh-release@v1
+        with:
+          files: dist/**/*.*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
