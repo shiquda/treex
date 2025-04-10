@@ -9,57 +9,28 @@ permissions:
   packages: write
 
 jobs:
-  release-linux-amd64:
-    name: Release Linux/amd64
+  build:
+    name: Release Build
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - goos: linux
+            goarch: amd64
+          - goos: linux
+            goarch: arm64
+          - goos: windows
+            goarch: amd64
+          - goos: windows
+            goarch: arm64
+          - goos: darwin
+            goarch: amd64
+          - goos: darwin
+            goarch: arm64
     steps:
       - uses: actions/checkout@v4
       - uses: wangyoucao577/go-release-action@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          goos: linux
-          goarch: amd64
-
-  release-linux-arm64:
-    name: Release Linux/arm64
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: wangyoucao577/go-release-action@v1
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          goos: linux
-          goarch: arm64
-
-  release-windows-amd64:
-    name: Release Windows/amd64
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: wangyoucao577/go-release-action@v1
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          goos: windows
-          goarch: amd64
-
-  release-darwin-amd64:
-    name: Release Darwin/amd64
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: wangyoucao577/go-release-action@v1
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          goos: darwin
-          goarch: amd64
-
-  release-darwin-arm64:
-    name: Release Darwin/arm64
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: wangyoucao577/go-release-action@v1
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          goos: darwin
-          goarch: arm64
+          goos: ${{ matrix.goos }}
+          goarch: ${{ matrix.goarch }}
