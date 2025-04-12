@@ -176,19 +176,23 @@ func (t *TreeNode) ToTreeString(isLast bool, prefix string) string {
 	var result string
 	// current node prefix
 	currentPrefix := prefix
-	if isLast {
-		currentPrefix += "└── "
-	} else {
-		currentPrefix += "├── "
+	if t.Depth > 0 {
+		if isLast {
+			currentPrefix += "└── "
+		} else {
+			currentPrefix += "├── "
+		}
 	}
 	result += currentPrefix + t.Name + "\n"
 
 	// sub node prefix
 	childPrefix := prefix
-	if isLast {
-		childPrefix += "    "
-	} else {
-		childPrefix += "│   "
+	if t.Depth > 0 {
+		if isLast {
+			childPrefix += "    "
+		} else {
+			childPrefix += "│   "
+		}
 	}
 
 	for i, child := range t.Children {
