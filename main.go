@@ -73,13 +73,20 @@ func getRelativePath(absolute string, root string) string {
 }
 
 func getTreeNode(root string, depth int, basePath string, maxDepth int, filter *Filter, hideHidden bool, dirsOnly bool) (*TreeNode, error) {
+	// 检查是否超过最大深度
+	if maxDepth > 0 && depth > maxDepth {
+		// 返回目录本身，但不递归获取其内容
+		dirName := filepath.Base(strings.TrimSuffix(root, "/"))
+		return &TreeNode{
+			Name:  dirName,
+			IsDir: true,
+			Depth: depth - 1,
+		}, nil
+	}
+
 	files, err := os.ReadDir(root)
 	if err != nil {
 		return nil, err
-	}
-	// 检查是否超过最大深度
-	if maxDepth > 0 && depth > maxDepth {
-		return nil, nil
 	}
 
 	relativeName := getRelativePath(root, basePath)
