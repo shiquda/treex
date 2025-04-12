@@ -17,32 +17,76 @@ type TreeNode struct {
 }
 
 type Filter struct {
-	dirs     []string
-	suffixes []string
+	dirs      []string
+	suffixes  []string
+	patterns  []string
+	gitignore bool
 }
 
-func NewFilter(excludeStr string) *Filter {
-	f := &Filter{}
-	if excludeStr == "" {
+func NewFilter(excludeStr string, useGitIgnore bool) *Filter {
+	f := &Filter{
+		gitignore: useGitIgnore,
+	}
+
+	if excludeStr == "" && !useGitIgnore {
 		return f
 	}
 
-	rules := strings.Split(excludeStr, ",")
-	for _, rule := range rules {
-		rule = strings.TrimSpace(rule)
-		if strings.HasSuffix(rule, "/") {
-			f.dirs = append(f.dirs, strings.TrimSuffix(rule, "/"))
-		} else if strings.HasPrefix(rule, ".") {
-			f.suffixes = append(f.suffixes, rule)
+	if excludeStr != "" {
+		rules := strings.Split(excludeStr, ",")
+		for _, rule := range rules {
+			rule = strings.TrimSpace(rule)
+			if strings.HasSuffix(rule, "/") {
+				f.dirs = append(f.dirs, strings.TrimSuffix(rule, "/"))
+			} else if strings.HasPrefix(rule, ".") {
+				f.suffixes = append(f.suffixes, rule)
+			} else {
+				f.patterns = append(f.patterns, rule)
+			}
 		}
 	}
+
+	if useGitIgnore {
+		f.loadGitIgnorePatterns()
+	}
+
 	return f
 }
 
-func (f *Filter) shouldExclude(name string, isDir bool) bool {
+func (f *Filter) loadGitIgnorePatterns() {
+	gitignorePath := ".gitignore"
+	content, err := os.ReadFile(gitignorePath)
+	if err != nil {
+		// 如果 .gitignore 不存在，忽略错误
+		return
+	}
+
+	lines := strings.Split(string(content), "\n")
+	for _, line := range lines {
+		line = strings.TrimSpace(line)
+		// 跳过空行和注释
+		if line == "" || strings.HasPrefix(line, "#") {
+			continue
+		}
+
+		// 处理 .gitignore 规则
+		if strings.HasSuffix(line, "/") {
+			// 目录规则
+			f.dirs = append(f.dirs, strings.TrimSuffix(line, "/"))
+		} else if strings.HasPrefix(line, "*.") {
+			// 后缀规则，如 *.txt
+			f.suffixes = append(f.suffixes, strings.TrimPrefix(line, "*"))
+		} else {
+			// 其他模式
+			f.patterns = append(f.patterns, line)
+		}
+	}
+}
+
+func (f *Filter) shouldExclude(name string, isDir bool, path string) bool {
 	if isDir {
 		for _, dir := range f.dirs {
-			if name == dir {
+			if matchPattern(name, dir) {
 				return true
 			}
 		}
@@ -53,6 +97,34 @@ func (f *Filter) shouldExclude(name string, isDir bool) bool {
 			}
 		}
 	}
+
+	// 检查通用模式
+	for _, pattern := range f.patterns {
+		if matchPattern(path, pattern) || matchPattern(name, pattern) {
+			return true
+		}
+	}
+
+	return false
+}
+
+// 简单的通配符匹配
+func matchPattern(name, pattern string) bool {
+	// 完全匹配
+	if pattern == name {
+		return true
+	}
+
+	// 前缀星号: *suffix
+	if strings.HasPrefix(pattern, "*") && strings.HasSuffix(name, strings.TrimPrefix(pattern, "*")) {
+		return true
+	}
+
+	// 后缀星号: prefix*
+	if strings.HasSuffix(pattern, "*") && strings.HasPrefix(name, strings.TrimSuffix(pattern, "*")) {
+		return true
+	}
+
 	return false
 }
 
@@ -101,12 +173,18 @@ func getTreeNode(root string, depth int, basePath string, maxDepth int, filter *
 			if hideHidden && strings.HasPrefix(entry.Name(), ".") {
 				continue
 			}
-			if filter.shouldExclude(entry.Name(), entry.IsDir()) {
+			childPath := relativeName
+			if childPath != "" {
+				childPath += "/"
+			}
+			childPath += entry.Name()
+
+			if filter.shouldExclude(entry.Name(), entry.IsDir(), childPath) {
 				continue
 			}
 			if entry.IsDir() {
-				childPath := root + "/" + entry.Name() + "/"
-				child, e := getTreeNode(childPath, depth+1, basePath, maxDepth, filter, hideHidden, dirsOnly)
+				fullChildPath := root + "/" + entry.Name() + "/"
+				child, e := getTreeNode(fullChildPath, depth+1, basePath, maxDepth, filter, hideHidden, dirsOnly)
 				if e != nil {
 					return nil, e
 				}
@@ -135,12 +213,18 @@ func getTreeNode(root string, depth int, basePath string, maxDepth int, filter *
 			if hideHidden && strings.HasPrefix(entry.Name(), ".") {
 				continue
 			}
-			if filter.shouldExclude(entry.Name(), entry.IsDir()) {
+			childPath := relativeName
+			if childPath != "" {
+				childPath += "/"
+			}
+			childPath += entry.Name()
+
+			if filter.shouldExclude(entry.Name(), entry.IsDir(), childPath) {
 				continue
 			}
 			if entry.IsDir() {
-				childPath := root + "/" + entry.Name() + "/"
-				child, e := getTreeNode(childPath, depth+1, basePath, maxDepth, filter, hideHidden, dirsOnly)
+				fullChildPath := root + "/" + entry.Name() + "/"
+				child, e := getTreeNode(fullChildPath, depth+1, basePath, maxDepth, filter, hideHidden, dirsOnly)
 				if e != nil {
 					return nil, e
 				}
@@ -273,6 +357,7 @@ func main() {
 	exclude := flag.StringP("exclude", "e", "", "exclude rules (comma-separated, e.g. 'dir/, .txt')")
 	hideHidden := flag.BoolP("hide-hidden", "H", false, "hide hidden files and directories (default: false)")
 	dirsOnly := flag.BoolP("dirs-only", "D", false, "show directories only (default: false)")
+	useGitIgnore := flag.BoolP("use-gitignore", "I", false, "use .gitignore patterns to exclude files/directories (default: false)")
 	flag.Parse()
 
 	// 获取绝对路径并确保以"/"结尾
@@ -285,7 +370,7 @@ func main() {
 		absPath += "/"
 	}
 
-	filter := NewFilter(*exclude)
+	filter := NewFilter(*exclude, *useGitIgnore)
 	node, err := getTreeNode(*dir, 1, absPath, *maxDepth, filter, *hideHidden, *dirsOnly)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "error: %s\n", err)
