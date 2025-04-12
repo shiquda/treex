@@ -13,6 +13,7 @@ Treex is a powerful command-line tool for displaying directory structures in var
   - 🕵️ Hide hidden files and directories
   - 📁 Show directories only
   - 🚫 Exclude specific directories or file types
+  - 📝 Automatically use .gitignore rules
 - 🛠️ Customizable output:
   - 📏 Control directory depth
   - 💾 Save output to file
@@ -59,6 +60,7 @@ You can run `treex -h` to see the help document.
   - `.ext`: Exclude files with specific extensions
 - `-H, --hide-hidden`: Hide hidden files and directories
 - `-D, --dirs-only`: Show directories only
+- `-I, --use-gitignore`: Use .gitignore mode to exclude files/directories
 
 ## 📚 Examples
 
@@ -67,47 +69,47 @@ We use the same directory for illustration:
 0. Simply run `treex`
 
 ```text
-└── .
-    ├── .git
-    │   ├── HEAD
-    │   ├── config
-    │   ├── description
-    │   ├── hooks
-    │   │   ├── applypatch-msg.sample
-    │   │   ├── commit-msg.sample
-    │   │   ├── fsmonitor-watchman.sample
-    │   │   ├── post-update.sample
-    │   │   ├── pre-applypatch.sample
-    │   │   ├── pre-commit.sample
-    │   │   ├── pre-merge-commit.sample
-    │   │   ├── pre-push.sample
-    │   │   ├── pre-rebase.sample
-    │   │   ├── pre-receive.sample
-    │   │   ├── prepare-commit-msg.sample
-    │   │   ├── push-to-checkout.sample
-    │   │   ├── sendemail-validate.sample
-    │   │   └── update.sample
-    │   ├── info
-    │   │   └── exclude
-    │   ├── objects
-    │   │   ├── info
-    │   │   └── pack
-    │   └── refs
-    │       ├── heads
-    │       └── tags
-    ├── .gitignore
-    ├── 1.go
-    ├── 2.go
-    ├── README.md
-    ├── build
-    │   └── win
-    │       └── output.exe
-    └── test
-        ├── 3.go
-        └── README_test.md
+.
+├── .git
+│   ├── HEAD
+│   ├── config
+│   ├── description
+│   ├── hooks
+│   │   ├── applypatch-msg.sample
+│   │   ├── commit-msg.sample
+│   │   ├── fsmonitor-watchman.sample
+│   │   ├── post-update.sample
+│   │   ├── pre-applypatch.sample
+│   │   ├── pre-commit.sample
+│   │   ├── pre-merge-commit.sample
+│   │   ├── pre-push.sample
+│   │   ├── pre-rebase.sample
+│   │   ├── pre-receive.sample
+│   │   ├── prepare-commit-msg.sample
+│   │   ├── push-to-checkout.sample
+│   │   ├── sendemail-validate.sample
+│   │   └── update.sample
+│   ├── info
+│   │   └── exclude
+│   ├── objects
+│   │   ├── info
+│   │   └── pack
+│   └── refs
+│       ├── heads
+│       └── tags
+├── .gitignore
+├── 1.go
+├── 2.go
+├── README.md
+├── build
+│   └── win
+│       └── output.exe
+└── test
+    ├── 3.go
+    └── README_test.md
 ```
 
-2. Without hidden files, save output as markdown format:
+1. Without hidden files, save output as markdown format:
 
 ```bash
 treex -H -f md -o structure.md
@@ -126,6 +128,30 @@ Then in `./structure.md`:
   - test/
     - 3.go
     - README_test.md
+```
+
+2. Use .gitignore rules to exclude files:
+
+`.gitignore`:
+
+```text
+build/
+```
+
+```bash
+treex -IH
+```
+
+This will automatically read the `.gitignore` file in the current directory and use the rules to exclude files and directories.
+
+```text
+.
+├── 1.go
+├── 2.go
+├── README.md
+└── test
+    ├── 3.go
+    └── README_test.md
 ```
 
 3. Generate mermaid diagram for unhidden directories only:
@@ -152,15 +178,15 @@ treex -e ".git/, .md"
 ```
 
 ```text
-└── .
-    ├── .gitignore
-    ├── 1.go
-    ├── 2.go
-    ├── build
-    │   └── win
-    │       └── output.exe
-    └── test
-        └── 3.go
+.
+├── .gitignore
+├── 1.go
+├── 2.go
+├── build
+│   └── win
+│       └── output.exe
+└── test
+    └── 3.go
 ```
 
 5. Show files up to depth 2 in indent mode:
