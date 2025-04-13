@@ -1,90 +1,91 @@
-# 🌳❌ Treex
+# 🌳❌ Treex（目录树生成工具）
 
-[简体中文](/docs/README_zh-cn.md)
+Treex 是一款强大的命令行工具，能够以多种格式展示目录结构。它提供多种输出格式和灵活的过滤选项，帮助您直观查看项目结构。
 
-Treex is a powerful command-line tool for displaying directory structures in various formats. It provides multiple output formats and flexible filtering options to help you visualize your project structure.
+## ✨ 功能特性
 
-## ✨ Features
+- 🎨 多格式输出：
+  - 🌲 树状格式（默认）
+  - 📑 缩进格式
+  - 📝 Markdown格式
+  - 📊 Mermaid流程图格式
+- 🔍 灵活过滤：
+  - 🕵️ 隐藏系统文件/目录
+  - 📁 仅显示目录
+  - 🚫 排除特定目录/文件类型
+  - 📝 自动应用.gitignore规则
+- 🛠️ 自定义输出：
+  - 📏 控制目录深度
+  - 💾 保存到文件
+  - 🎯 自定义输出格式
+  - ⭐ 文件类型图标支持
 
-- 🎨 Multiple output formats:
-  - 🌲 Tree format (default)
-  - 📑 Indent format
-  - 📝 Markdown format
-  - 📊 Mermaid format
-- 🔍 Flexible filtering options:
-  - 🕵️ Hide hidden files and directories
-  - 📁 Show directories only
-  - 🚫 Exclude specific directories or file types
-  - 📝 Automatically use .gitignore rules
-- 🛠️ Customizable output:
-  - 📏 Control directory depth
-  - 💾 Save output to file
-  - 🎯 Customize output format
-  - ⭐ Icon support for files
+## 📦 安装方法
 
-## 📦 Installation
+从[发布页面](https://github.com/shiquda/treex/releases)下载预编译二进制文件，并添加到PATH环境变量。
 
-Download the pre-build binary from the [releases](https://github.com/shiquda/treex/releases), and add it to your PATH.
-
-Or, if you want to build it yourself with go:
+或使用Go自行编译：
 
 ```bash
 go install github.com/shiquda/treex@latest
 ```
 
-## 📖 Usage
+## 📖 使用指南
 
-Basic usage:
+基础用法：
 
 ```bash
-treex -d <directory>
+treex -d <目录路径>
 ```
 
-To generate a tree for the current directory, you just need to run:
+生成当前目录树：
 
 ```bash
 treex
 ```
 
-### ⚙️ Options
+### ⚙️ 参数选项
 
-You can run `treex -h` to see the help document.
+执行 `treex -h` 查看帮助文档。
 
-Here's the command-line options information presented in a table format:
+命令行参数对照表：
 
-| Short Option | Long Option    | Argument            | Description                                                                 | Default Value |
-|--------------|----------------|---------------------|-----------------------------------------------------------------------------|---------------|
-| `-d`         | `--dir`        | `<directory>`       | Directory to scan                                                           | `.`           |
-| `-f`         | `--format`     | `<format>`          | Output format (`tree`, `indent`, `md`, `mermaid`)                           | `tree`        |
-| `-m`         | `--max-depth`  | `<number>`          | Maximum directory depth (0 for unlimited)                                  | -             |
-| `-o`         | `--output`     | `<filepath>`        | Output file path                                                            | stdout        |
-| `-e`         | `--exclude`    | `<rules>`           | Exclude rules (comma-separated: `dir/` for dirs, `.ext` for extensions)     | -             |
-| `-H`         | `--hide-hidden` | -                   | Hide hidden files and directories                                           | false         |
-| `-D`         | `--dirs-only`  | -                   | Show directories only                                                       | false         |
-| `-I`         | `--use-gitignore` | -                 | Use .gitignore mode to exclude files/directories                           | false         |
-| `-C`         | `--icons`      | -                   | Display file type icons                                                     | false         |
+| 短参数 | 长参数        | 参数值            | 描述                                                                 | 默认值       |
+|--------|---------------|-------------------|---------------------------------------------------------------------|-------------|
+| `-d`   | `--dir`       | `<目录>`          | 要扫描的目录                                                         | 当前目录    |
+| `-f`   | `--format`    | `<格式>`          | 输出格式（`tree`/`indent`/`md`/`mermaid`）                           | `tree`      |
+| `-m`   | `--max-depth` | `<数字>`          | 最大目录深度（0表示无限制）                                         | 无限制      |
+| `-o`   | `--output`    | `<文件路径>`      | 输出文件路径                                                        | 标准输出    |
+| `-e`   | `--exclude`   | `<规则>`          | 排除规则（逗号分隔：`dir/`排除目录，`.ext`排除扩展名）               | 不过滤      |
+| `-H`   | `--hide-hidden` | -               | 隐藏系统文件/目录                                                   | 显示        |
+| `-D`   | `--dirs-only` | -               | 仅显示目录                                                          | 显示全部    |
+| `-I`   | `--use-gitignore` | -             | 应用.gitignore规则                                                  | 不应用      |
+| `-C`   | `--icons`     | -               | 显示文件类型图标                                                    | 不显示      |
 
-Format options details:
+格式说明：
 
-- `tree`: Tree format with lines
-- `indent`: Indent format
-- `md`: Markdown format
-- `mermaid`: Mermaid format for diagrams
+- `tree`：带连接线的树状结构
+- `indent`：缩进格式
+- `md`：Markdown列表格式
+- `mermaid`：Mermaid流程图格式
 
-Exclude rules format:
+排除规则格式：
 
-- `dir/`: Exclude directories with specific names
-- `.ext`: Exclude files with specific extensions
+- `dir/`：排除指定名称的目录
+- `.ext`：排除指定扩展名的文件
 
-## 📚 Examples
+## 📚 使用示例
 
-We use the same directory for illustration:
+使用相同目录结构演示：
 
-0. Simply run `treex`
+0. 基础命令：
+
+```bash
+treex
+```
 
 <details>
-
-<summary>Result:</summary>
+<summary>输出结果：</summary>
 
 ```text
 .
@@ -129,17 +130,14 @@ We use the same directory for illustration:
 
 </details>
 
-1. Without hidden files, save output as markdown format:
+1. 排除隐藏文件并保存为Markdown格式：
 
 ```bash
 treex -H -f md -o structure.md
 ```
 
 <details>
-
-<summary>Result:</summary>
-
-Then in `./structure.md`:
+<summary>生成文件内容：</summary>
 
 ```markdown
 - ./
@@ -156,25 +154,21 @@ Then in `./structure.md`:
 
 </details>
 
-2. Use .gitignore rules to exclude files:
-
-`.gitignore`:
+2. 应用.gitignore规则：
+`.gitignore`内容：
 
 ```text
 build/
 ```
 
-execute:
+执行命令：
 
 ```bash
 treex -IH
 ```
 
-This will automatically read the `.gitignore` file in the current directory and use the rules to exclude files and directories.
-
 <details>
-
-<summary>Result:</summary>
+<summary>输出结果：</summary>
 
 ```text
 .
@@ -188,15 +182,14 @@ This will automatically read the `.gitignore` file in the current directory and 
 
 </details>
 
-3. Generate mermaid diagram for unhidden directories only:
+3. 生成Mermaid格式目录图：
 
 ```bash
 treex -HD -f mermaid
 ```
 
 <details>
-
-<summary>Result:</summary>
+<summary>输出结果：</summary>
 
 ```mermaid
 graph TD
@@ -211,15 +204,14 @@ graph TD
 
 </details>
 
-4. Exclude specific directories or file types:
+4. 排除特定目录/文件类型：
 
 ```bash
 treex -e ".git/, .md"
 ```
 
 <details>
-
-<summary>Result:</summary>
+<summary>输出结果：</summary>
 
 ```text
 .
@@ -235,15 +227,14 @@ treex -e ".git/, .md"
 
 </details>
 
-5. Show files up to depth 2 in indent mode:
+5. 限制深度为2的缩进格式：
 
 ```bash
 treex -m 3 -f indent
 ```
 
 <details>
-
-<summary>Result:</summary>
+<summary>输出结果：</summary>
 
 ```text
 .
@@ -263,15 +254,14 @@ treex -m 3 -f indent
 
 </details>
 
-6. Display file structure with icons(Here we use an real project structure):
+6. 带图标的目录结构（真实项目示例）：
 
 ```bash
 treex -CHI -m 3
 ```
 
 <details>
-
-<summary>Result:</summary>
+<summary>输出结果：</summary>
 
 ```text
 📁 ./
@@ -381,6 +371,10 @@ treex -CHI -m 3
 
 </details>
 
-## ♥️ Contribution
+## ♥️ 参与贡献
 
-The project is in its early stages of development. Any form of assistance is welcome, including raising issues, creating PRs, or giving it a STAR⭐!
+项目处于早期开发阶段，欢迎任何形式的参与：
+
+- 给项目点Star⭐~
+- 提交Issue反馈
+- 发起PR
