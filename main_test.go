@@ -178,9 +178,9 @@ func TestIntegration(t *testing.T) {
 			}
 
 			// 测试各种输出格式
-			_ = node.ToTreeString(true, "")
-			_ = node.ToIndentString(2)
-			_ = node.ToMarkdownString(0)
+			_ = node.ToTreeString(true, "", false)
+			_ = node.ToIndentString(2, false)
+			_ = node.ToMarkdownString(0, false)
 			_ = node.ToMermaidString()
 		})
 	}

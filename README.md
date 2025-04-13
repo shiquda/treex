@@ -61,6 +61,7 @@ You can run `treex -h` to see the help document.
 - `-H, --hide-hidden`: Hide hidden files and directories
 - `-D, --dirs-only`: Show directories only
 - `-I, --use-gitignore`: Use .gitignore mode to exclude files/directories
+- `-C, --icons`: Display file type icons (default: false)
 
 ## 📚 Examples
 
@@ -209,6 +210,118 @@ treex -m 3 -f indent
     test
         3.go
         README_test.md
+```
+
+6. Display file structure with icons(Here we use an real project structure):
+
+```bash
+treex -CHI -m 3
+```
+
+```text
+📁 ./
+├── 📝 CODE_OF_CONDUCT.md
+├── 📝 CONTRIBUTING.md
+├── 📄 LICENSE
+├── 📝 README.md
+├── 📁 build/
+│   ├── 📄 entitlements.mac.plist
+│   ├── 📄 icon.icns
+│   ├── 📄 icon.ico
+│   ├── 🖼️ icon.png
+│   ├── 📁 icons/
+│   │   ├── 🖼️ 1024x1024.png
+│   │   ├── 🖼️ 128x128.png
+│   │   ├── 🖼️ 16x16.png
+│   │   ├── 🖼️ 24x24.png
+│   │   ├── 🖼️ 256x256.png
+│   │   ├── 🖼️ 32x32.png
+│   │   ├── 🖼️ 48x48.png
+│   │   ├── 🖼️ 512x512.png
+│   │   └── 🖼️ 64x64.png
+│   ├── 🖼️ logo.png
+│   ├── 📄 nsis-installer.nsh
+│   ├── 🖼️ tray_icon.png
+│   ├── 🖼️ tray_icon_dark.png
+│   └── 🖼️ tray_icon_light.png
+├── ⚙️ dev-app-update.yml
+├── 📁 docs/
+│   ├── 📝 README.ja.md
+│   ├── 📝 README.zh.md
+│   ├── 📝 dev.md
+│   ├── 📝 sponsor.md
+│   └── 📁 technical/
+│       └── 📝 KnowledgeService.md
+├── ⚙️ electron-builder.yml
+├── 📜 electron.vite.config.ts
+├── 📄 eslint.config.mjs
+├── 📋 package.json
+├── 📁 packages/
+│   ├── 📁 artifacts/
+│   │   ├── 📝 README.md
+│   │   ├── 📋 package.json
+│   │   └── 📁 statics/
+│   ├── 📁 database/
+│   │   ├── 📝 README.md
+│   │   ├── 📁 data/
+│   │   ├── 📋 package.json
+│   │   ├── 📁 src/
+│   │   └── 📄 yarn.lock
+│   └── 📁 shared/
+│       ├── 📜 IpcChannel.ts
+│       └── 📁 config/
+├── 📁 resources/
+│   ├── 📁 cherry-studio/
+│   │   ├── 🌐 license.html
+│   │   └── 🌐 releases.html
+│   ├── 📁 data/
+│   │   └── 📋 agents.json
+│   ├── 📁 js/
+│   │   ├── 📜 bridge.js
+│   │   └── 📜 utils.js
+│   ├── 📁 scripts/
+│   │   ├── 📜 download.js
+│   │   ├── 📜 install-bun.js
+│   │   └── 📜 install-uv.js
+│   └── 📄 textMonitor.swift
+├── 📁 scripts/
+│   ├── 📜 after-pack.js
+│   ├── 📜 build-npm.js
+│   ├── 📜 check-i18n.js
+│   ├── 📜 check-i18n.ts
+│   ├── 📜 cloudflare-worker.js
+│   ├── 📜 notarize.js
+│   ├── 📜 remove-locales.js
+│   ├── 📜 replace-spaces.js
+│   ├── 📜 update-i18n.ts
+│   ├── 📜 utils.js
+│   └── 📜 version.js
+├── 📁 src/
+│   ├── 📁 components/
+│   ├── 📁 main/
+│   │   ├── 📜 config.ts
+│   │   ├── 📜 constant.ts
+│   │   ├── 📜 electron.d.ts
+│   │   ├── 📁 embeddings/
+│   │   ├── 📜 env.d.ts
+│   │   ├── 📜 index.ts
+│   │   ├── 📁 integration/
+│   │   ├── 📜 ipc.ts
+│   │   ├── 📁 loader/
+│   │   ├── 📁 mcpServers/
+│   │   ├── 📁 reranker/
+│   │   ├── 📁 services/
+│   │   └── 📁 utils/
+│   ├── 📁 preload/
+│   │   ├── 📜 index.d.ts
+│   │   └── 📜 index.ts
+│   └── 📁 renderer/
+│       ├── 🌐 index.html
+│       └── 📁 src/
+├── 📋 tsconfig.json
+├── 📋 tsconfig.node.json
+├── 📋 tsconfig.web.json
+└── 📄 yarn.lock
 ```
 
 ## ♥️ Contribution

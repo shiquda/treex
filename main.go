@@ -18,6 +18,7 @@ func main() {
 	hideHidden := flag.BoolP("hide-hidden", "H", false, "hide hidden files and directories (default: false)")
 	dirsOnly := flag.BoolP("dirs-only", "D", false, "show directories only (default: false)")
 	useGitIgnore := flag.BoolP("use-gitignore", "I", false, "use .gitignore patterns to exclude files/directories (default: false)")
+	useIcons := flag.BoolP("icons", "C", false, "display file type icons (default: false)")
 	flag.Parse()
 
 	// 获取绝对路径并确保以"/"结尾
@@ -41,11 +42,11 @@ func main() {
 	var outputStr string
 	switch *format {
 	case "tree":
-		outputStr = node.ToTreeString(true, "")
+		outputStr = node.ToTreeString(true, "", *useIcons)
 	case "indent":
-		outputStr = node.ToIndentString(4)
+		outputStr = node.ToIndentString(4, *useIcons)
 	case "md":
-		outputStr = node.ToMarkdownString(0)
+		outputStr = node.ToMarkdownString(0, *useIcons)
 	case "mermaid":
 		outputStr = node.ToMermaidString()
 	default:

@@ -40,12 +40,12 @@ func createTestTree() *TreeNode {
 
 func TestToIndentString(t *testing.T) {
 	tree := createTestTree()
-	result := tree.ToIndentString(2)
+	result := tree.ToIndentString(2, false) // 不使用图标
 
 	// 检查输出是否包含预期的内容
 	expectedLines := []string{
-		"root",
-		"  dir1",
+		"root/",
+		"  dir1/",
 		"    file2.go",
 		"  file1.txt",
 	}
@@ -64,16 +64,39 @@ func TestToIndentString(t *testing.T) {
 	if !strings.HasPrefix(lines[2], "    ") {
 		t.Error("file2.go line should have 4 spaces indentation")
 	}
+
+	// 检查目录后面是否添加了斜杠
+	if !strings.HasSuffix(lines[0], "/") {
+		t.Error("Root directory should have a trailing slash")
+	}
+
+	if !strings.HasSuffix(lines[1], "/") {
+		t.Error("Directory 'dir1' should have a trailing slash")
+	}
+
+	if strings.HasSuffix(lines[2], "/") {
+		t.Error("File 'file2.go' should not have a trailing slash")
+	}
+
+	if strings.HasSuffix(lines[3], "/") {
+		t.Error("File 'file1.txt' should not have a trailing slash")
+	}
+
+	// 测试图标模式
+	iconResult := tree.ToIndentString(2, true)
+	if !strings.Contains(iconResult, "📁") {
+		t.Error("Icon mode should display folder icon for directories")
+	}
 }
 
 func TestToTreeString(t *testing.T) {
 	tree := createTestTree()
-	result := tree.ToTreeString(true, "")
+	result := tree.ToTreeString(true, "", false) // 不使用图标
 
 	// 检查输出是否包含预期的内容和树形符号
 	expectedPatterns := []string{
-		"root",
-		"├── dir1",
+		"root/",
+		"├── dir1/",
 		"│   └── file2.go",
 		"└── file1.txt",
 	}
@@ -108,11 +131,20 @@ func TestToTreeString(t *testing.T) {
 			t.Error("File 'file2.go' should not have a trailing slash")
 		}
 	}
+
+	// 测试图标模式
+	iconResult := tree.ToTreeString(true, "", true)
+	if !strings.Contains(iconResult, "📁") {
+		t.Error("Icon mode should display folder icon for directories")
+	}
+	if !strings.Contains(iconResult, "🔹") {
+		t.Error("Icon mode should display Go file icon for .go files")
+	}
 }
 
 func TestToMarkdownString(t *testing.T) {
 	tree := createTestTree()
-	result := tree.ToMarkdownString(0)
+	result := tree.ToMarkdownString(0, false)
 
 	// 检查输出是否包含预期的markdown列表格式
 	expectedPatterns := []string{

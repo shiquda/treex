@@ -2,23 +2,99 @@ package main
 
 import (
 	"fmt"
+	"path/filepath"
+	"strings"
 )
 
+// 获取文件类型图标
+func getFileIcon(name string, isDir bool) string {
+	if isDir {
+		return "📁 " // 文件夹图标
+	}
+
+	extension := strings.ToLower(filepath.Ext(name))
+	switch extension {
+	case ".go":
+		return "🔹 " // Go 文件
+	case ".py":
+		return "🐍 " // Python 文件
+	case ".js", ".jsx", ".ts", ".tsx":
+		return "📜 " // JavaScript/TypeScript 文件
+	case ".html", ".htm":
+		return "🌐 " // HTML 文件
+	case ".css":
+		return "🎨 " // CSS 文件
+	case ".md":
+		return "📝 " // Markdown 文件
+	case ".json":
+		return "📋 " // JSON 文件
+	case ".xml":
+		return "📋 " // XML 文件
+	case ".yml", ".yaml":
+		return "⚙️ " // YAML 文件
+	case ".txt":
+		return "📄 " // 纯文本文件
+	case ".png", ".jpg", ".jpeg", ".gif", ".bmp", ".svg":
+		return "🖼️ " // 图片文件
+	case ".mp3", ".wav", ".ogg":
+		return "🎵 " // 音频文件
+	case ".mp4", ".avi", ".mkv", ".mov":
+		return "🎬 " // 视频文件
+	case ".pdf":
+		return "📕 " // PDF 文件
+	case ".zip", ".tar", ".gz", ".7z", ".rar":
+		return "📦 " // 压缩文件
+	case ".exe", ".dll":
+		return "⚡ " // 可执行文件
+	case ".sh", ".bash", ".zsh", ".ps1":
+		return "⚙️ " // 脚本文件
+	case ".c", ".cpp", ".h", ".hpp":
+		return "🔧 " // C/C++ 文件
+	case ".java":
+		return "☕ " // Java 文件
+	case ".rb":
+		return "💎 " // Ruby 文件
+	case ".php":
+		return "🐘 " // PHP 文件
+	case ".rs":
+		return "🦀 " // Rust 文件
+	case ".sql":
+		return "🗄️ " // SQL 文件
+	case ".gitignore", ".dockerignore":
+		return "🔒 " // 忽略文件
+	default:
+		return "📄 " // 默认为普通文件
+	}
+}
+
+func (t *TreeNode) getEntryString(useIcons bool) string {
+	s := t.Name
+	if t.IsDir {
+		s += "/"
+	}
+	if useIcons {
+		s = getFileIcon(t.Name, t.IsDir) + s
+	}
+	return s
+}
+
 // 缩进格式输出
-func (t *TreeNode) ToIndentString(spaces int) string {
+func (t *TreeNode) ToIndentString(spaces int, useIcons bool) string {
 	var result string
 	for i := 0; i < t.Depth*spaces; i++ {
 		result += " "
 	}
-	result += t.Name + "\n"
+
+	result += t.getEntryString(useIcons) + "\n"
+
 	for _, child := range t.Children {
-		result += child.ToIndentString(spaces)
+		result += child.ToIndentString(spaces, useIcons)
 	}
 	return result
 }
 
 // 树形结构输出
-func (t *TreeNode) ToTreeString(isLast bool, prefix string) string {
+func (t *TreeNode) ToTreeString(isLast bool, prefix string, useIcons bool) string {
 	var result string
 	// current node prefix
 	currentPrefix := prefix
@@ -30,11 +106,7 @@ func (t *TreeNode) ToTreeString(isLast bool, prefix string) string {
 		}
 	}
 
-	// 如果是目录，则在名称后添加斜杠
-	nodeName := t.Name
-	if t.IsDir {
-		nodeName += "/"
-	}
+	nodeName := t.getEntryString(useIcons)
 
 	result += currentPrefix + nodeName + "\n"
 
@@ -50,13 +122,13 @@ func (t *TreeNode) ToTreeString(isLast bool, prefix string) string {
 
 	for i, child := range t.Children {
 		isLastChild := i == len(t.Children)-1
-		result += child.ToTreeString(isLastChild, childPrefix)
+		result += child.ToTreeString(isLastChild, childPrefix, useIcons)
 	}
 	return result
 }
 
 // Markdown格式输出
-func (t *TreeNode) ToMarkdownString(level int) string {
+func (t *TreeNode) ToMarkdownString(level int, useIcons bool) string {
 	var result string
 	// 添加缩进
 	for i := 0; i < level; i++ {
@@ -64,17 +136,12 @@ func (t *TreeNode) ToMarkdownString(level int) string {
 	}
 	// 添加列表标记
 	result += "- "
-	// 如果是目录，添加目录名和斜杠
-	if t.IsDir {
-		result += t.Name + "/"
-	} else {
-		result += t.Name
-	}
+	result += t.getEntryString(useIcons)
 	result += "\n"
 
 	// 处理子节点
 	for _, child := range t.Children {
-		result += child.ToMarkdownString(level + 1)
+		result += child.ToMarkdownString(level+1, useIcons)
 	}
 	return result
 }
