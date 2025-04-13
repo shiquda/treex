@@ -29,7 +29,14 @@ func (t *TreeNode) ToTreeString(isLast bool, prefix string) string {
 			currentPrefix += "├── "
 		}
 	}
-	result += currentPrefix + t.Name + "\n"
+
+	// 如果是目录，则在名称后添加斜杠
+	nodeName := t.Name
+	if t.IsDir {
+		nodeName += "/"
+	}
+
+	result += currentPrefix + nodeName + "\n"
 
 	// sub node prefix
 	childPrefix := prefix

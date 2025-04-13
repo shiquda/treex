@@ -89,6 +89,25 @@ func TestToTreeString(t *testing.T) {
 	if strings.HasPrefix(lines[0], "└── ") {
 		t.Error("Root node should not display prefix symbol")
 	}
+
+	// 检查目录后面是否添加了斜杠
+	for i, line := range lines {
+		if i == 0 && !strings.HasSuffix(line, "/") {
+			t.Error("Root directory should have a trailing slash")
+		}
+
+		if strings.Contains(line, "dir1") && !strings.HasSuffix(line, "/") {
+			t.Error("Directory 'dir1' should have a trailing slash")
+		}
+
+		if strings.Contains(line, "file1.txt") && strings.HasSuffix(line, "/") {
+			t.Error("File 'file1.txt' should not have a trailing slash")
+		}
+
+		if strings.Contains(line, "file2.go") && strings.HasSuffix(line, "/") {
+			t.Error("File 'file2.go' should not have a trailing slash")
+		}
+	}
 }
 
 func TestToMarkdownString(t *testing.T) {
