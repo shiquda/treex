@@ -1,5 +1,10 @@
 # 🌳❌ Treex
 
+[![Go Version](https://img.shields.io/badge/Go-1.22+-00ADD8?style=flat&logo=go)](https://golang.org)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/shiquda/treex?include_prereleases)](https://github.com/shiquda/treex/releases)
+[![Go Report Card](https://goreportcard.com/badge/github.com/shiquda/treex)](https://goreportcard.com/report/github.com/shiquda/treex)
+
 ![Treex](/docs/img/treex.png)
 
 [简体中文](/docs/README_zh-cn.md)
