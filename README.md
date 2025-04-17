@@ -1,5 +1,7 @@
 # 🌳❌ Treex
 
+![Treex](/docs/img/treex.png)
+
 [简体中文](/docs/README_zh-cn.md)
 
 Treex is a powerful command-line tool for displaying directory structures in different formats. It offers **multiple output formats** and **flexible filtering options**, making it easy to visualize and explore your project layout.
