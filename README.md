@@ -2,31 +2,31 @@
 
 [简体中文](/docs/README_zh-cn.md)
 
-Treex is a powerful command-line tool for displaying directory structures in various formats. It provides multiple output formats and flexible filtering options to help you visualize your project structure.
+Treex is a powerful command-line tool for displaying directory structures in different formats. It offers **multiple output formats** and **flexible filtering options**, making it easy to visualize and explore your project layout.
 
 ## ✨ Features
 
 - 🎨 Multiple output formats:
-  - 🌲 Tree format (default)
-  - 📑 Indent format
-  - 📝 Markdown format
-  - 📊 Mermaid format
+  - 🌲 `tree`: Tree format (default)
+  - 📑 `indent`: Indented list format
+  - 📝 `md`: Markdown format
+  - 📊 `mermaid`: Mermaid format
 - 🔍 Flexible filtering options:
-  - 🕵️ Hide hidden files and directories
-  - 📁 Show directories only
-  - 🚫 Exclude specific directories or file types
-  - 📝 Automatically use .gitignore rules
+  - 🕵️ `-H`: Hide hidden files and directories
+  - 📁 `-D`: Show directories only
+  - 🚫 `-e <rules>`: Exclude specific directories or file extensions
+  - 📝 `-I`: Automatically apply .gitignore rules
 - 🛠️ Customizable output:
-  - 📏 Control directory depth
-  - 💾 Save output to file
-  - 🎯 Customize output format
-  - ⭐ Icon support for files
+  - 📏 `-m <depth>`: Control directory depth
+  - 💾 `-o <path>`: Save output to a file
+  - 🎯 `-f <format>`: Select output format
+  - ⭐ `-C`: Show icons for files (via emoji)
 
 ## 📦 Installation
 
-Download the pre-build binary from the [releases](https://github.com/shiquda/treex/releases), and add it to your PATH.
+Download the pre-built binary from the [releases](https://github.com/shiquda/treex/releases) page and add it to your PATH.
 
-Or, if you want to build it yourself with go:
+Or, if you want to build it yourself with Go:
 
 ```bash
 go install github.com/shiquda/treex@latest
@@ -40,100 +40,55 @@ Basic usage:
 treex -d <directory>
 ```
 
-To generate a tree for the current directory, you just need to run:
+To generate a tree for the current directory, simply run:
 
 ```bash
 treex
 ```
 
-### ⚙️ Options
+### ⚙️ Full Options
 
-You can run `treex -h` to see the help document.
+You can run `treex -h` to see the help message.
 
-Here's the command-line options information presented in a table format:
+All command-line options are listed in the table below:
 
 | Short Option | Long Option    | Argument            | Description                                                                 | Default Value |
 |--------------|----------------|---------------------|-----------------------------------------------------------------------------|---------------|
 | `-d`         | `--dir`        | `<directory>`       | Directory to scan                                                           | `.`           |
 | `-f`         | `--format`     | `<format>`          | Output format (`tree`, `indent`, `md`, `mermaid`)                           | `tree`        |
 | `-m`         | `--max-depth`  | `<number>`          | Maximum directory depth (0 for unlimited)                                  | -             |
-| `-o`         | `--output`     | `<filepath>`        | Output file path                                                            | stdout        |
+| `-o`         | `--output`     | `<filepath>`        | Path to output file                                                         | stdout        |
 | `-e`         | `--exclude`    | `<rules>`           | Exclude rules (comma-separated: `dir/` for dirs, `.ext` for extensions)     | -             |
 | `-H`         | `--hide-hidden` | -                   | Hide hidden files and directories                                           | false         |
 | `-D`         | `--dirs-only`  | -                   | Show directories only                                                       | false         |
-| `-I`         | `--use-gitignore` | -                 | Use .gitignore mode to exclude files/directories                           | false         |
-| `-C`         | `--icons`      | -                   | Display file type icons                                                     | false         |
+| `-I`         | `--use-gitignore` | -                 | Exclude files/directories based on `.gitignore`                              | false         |
+| `-C`         | `--icons`      | -                   | Show file type icons                                                        | false         |
 
 Format options details:
 
-- `tree`: Tree format with lines
-- `indent`: Indent format
+- `tree`: Tree structure with branches
+- `indent`: Indented list format
 - `md`: Markdown format
 - `mermaid`: Mermaid format for diagrams
 
 Exclude rules format:
 
-- `dir/`: Exclude directories with specific names
-- `.ext`: Exclude files with specific extensions
+- `dir/`: Exclude directories matching the specified name
+- `.ext`: Exclude files with the specified extension
 
 ## 📚 Examples
 
-We use the same directory for illustration:
-
-0. Simply run `treex`
-
-<details>
-
-<summary>Result:</summary>
-
-```text
-.
-├── .git
-│   ├── HEAD
-│   ├── config
-│   ├── description
-│   ├── hooks
-│   │   ├── applypatch-msg.sample
-│   │   ├── commit-msg.sample
-│   │   ├── fsmonitor-watchman.sample
-│   │   ├── post-update.sample
-│   │   ├── pre-applypatch.sample
-│   │   ├── pre-commit.sample
-│   │   ├── pre-merge-commit.sample
-│   │   ├── pre-push.sample
-│   │   ├── pre-rebase.sample
-│   │   ├── pre-receive.sample
-│   │   ├── prepare-commit-msg.sample
-│   │   ├── push-to-checkout.sample
-│   │   ├── sendemail-validate.sample
-│   │   └── update.sample
-│   ├── info
-│   │   └── exclude
-│   ├── objects
-│   │   ├── info
-│   │   └── pack
-│   └── refs
-│       ├── heads
-│       └── tags
-├── .gitignore
-├── 1.go
-├── 2.go
-├── README.md
-├── build
-│   └── win
-│       └── output.exe
-└── test
-    ├── 3.go
-    └── README_test.md
-```
-
-</details>
+The following examples use the same directory structure.
 
 1. Without hidden files, save output as markdown format:
 
 ```bash
 treex -H -f md -o structure.md
 ```
+
+- `-H`: Hide hidden files and directories
+- `-f md`: Output in Markdown format
+- `-o structure.md`: Save output to structure.md file
 
 <details>
 
@@ -164,13 +119,16 @@ Then in `./structure.md`:
 build/
 ```
 
-execute:
+Run:
 
 ```bash
 treex -IH
 ```
 
-This will automatically read the `.gitignore` file in the current directory and use the rules to exclude files and directories.
+- `-I`: Exclude files/directories based on `.gitignore`
+- `-H`: Hide hidden files and directories
+
+This will automatically read the `.gitignore` file in the current directory and exclude matching files and directories.
 
 <details>
 
@@ -188,11 +146,15 @@ This will automatically read the `.gitignore` file in the current directory and 
 
 </details>
 
-3. Generate mermaid diagram for unhidden directories only:
+3. Generate mermaid diagram for visible directories only:
 
 ```bash
 treex -HD -f mermaid
 ```
+
+- `-H`: Hide hidden files and directories
+- `-D`: Show directories only
+- `-f mermaid`: Output in Mermaid diagram format
 
 <details>
 
@@ -211,11 +173,13 @@ graph TD
 
 </details>
 
-4. Exclude specific directories or file types:
+4. Exclude specific directories or extensions:
 
 ```bash
 treex -e ".git/, .md"
 ```
+
+- `-e ".git/, .md"`: Exclude `.git` directory and files with `.md` extension
 
 <details>
 
@@ -238,36 +202,49 @@ treex -e ".git/, .md"
 5. Show files up to depth 2 in indent mode:
 
 ```bash
-treex -m 3 -f indent
+treex -m 2 -f indent
 ```
+
+- `-m 2`: Show files up to depth 2
+- `-f indent`: Output in indented list format
 
 <details>
 
 <summary>Result:</summary>
 
 ```text
-.
-    .git
+./
+    .git/
         HEAD
         config
         description
+        hooks/
+        info/
+        objects/
+        refs/
     .gitignore
     1.go
     2.go
     README.md
-    build
-    test
+    build/
+        win/
+    test/
         3.go
         README_test.md
 ```
 
 </details>
 
-6. Display file structure with icons(Here we use an real project structure):
+6. Display the file structure with icons (using a real project structure as an example):
 
 ```bash
 treex -CHI -m 3
 ```
+
+- `-C`: Show file type icons
+- `-H`: Hide hidden files and directories
+- `-I`: Exclude files/directories based on `.gitignore`
+- `-m 3`: Show files up to depth 3
 
 <details>
 
@@ -383,4 +360,4 @@ treex -CHI -m 3
 
 ## ♥️ Contribution
 
-The project is in its early stages of development. Any form of assistance is welcome, including raising issues, creating PRs, or giving it a STAR⭐!
+The project is in its early stages of development. All contributions are welcome, including raising issues, submitting pull requests, or giving the project a ⭐ star on GitHub!
