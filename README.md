@@ -368,3 +368,13 @@ treex -CHI -m 3
 ## ♥️ Contribution
 
 The project is in its early stages of development. All contributions are welcome, including raising issues, submitting pull requests, or giving the project a ⭐ star on GitHub!
+
+## ⭐ Star History
+
+<a href="https://www.star-history.com/#shiquda/treex&Timeline">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=shiquda/treex&type=Timeline&theme=dark" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=shiquda/treex&type=Timeline" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=shiquda/treex&type=Timeline" />
+ </picture>
+</a>

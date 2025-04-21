@@ -360,3 +360,13 @@ treex -CHI -m 3
 ## ♥️ 参与贡献
 
 Treex 还处于早期开发阶段。欢迎任何形式的参与，包括提交Issue、发起PR，或在赏本项目一个⭐星星~！
+
+## ⭐ Star History
+
+<a href="https://www.star-history.com/#shiquda/treex&Timeline">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=shiquda/treex&type=Timeline&theme=dark" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=shiquda/treex&type=Timeline" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=shiquda/treex&type=Timeline" />
+ </picture>
+</a>
