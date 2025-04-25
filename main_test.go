@@ -6,12 +6,12 @@ import (
 	"testing"
 )
 
-// 用于测试的临时目录结构
+// Setup temporary directory structure for testing
 func setupTestDir(t *testing.T) string {
 	tempDir := filepath.Join(os.TempDir(), "treex_test")
-	os.RemoveAll(tempDir) // 清理之前的测试目录
+	os.RemoveAll(tempDir) // Clean up previous test directory
 
-	// 创建目录结构
+	// Create directory structure
 	dirs := []string{
 		filepath.Join(tempDir, "dir1"),
 		filepath.Join(tempDir, "dir2", "subdir"),
@@ -24,7 +24,7 @@ func setupTestDir(t *testing.T) string {
 		}
 	}
 
-	// 创建一些文件
+	// Create some files
 	files := map[string]string{
 		filepath.Join(tempDir, "file1.txt"):         "test content",
 		filepath.Join(tempDir, "dir1", "file2.go"):  "go code",
@@ -38,13 +38,13 @@ func setupTestDir(t *testing.T) string {
 		}
 	}
 
-	// 为gitignore测试创建文件
+	// Create files for gitignore test
 	ignoreContent := "*.log\nbuild/\n"
 	if err := os.WriteFile(filepath.Join(tempDir, ".gitignore"), []byte(ignoreContent), 0644); err != nil {
 		t.Fatalf("Failed to create .gitignore file: %v", err)
 	}
 
-	// 创建应该被排除的文件
+	// Create files that should be excluded
 	os.WriteFile(filepath.Join(tempDir, "log.log"), []byte("log"), 0644)
 	os.MkdirAll(filepath.Join(tempDir, "build"), 0755)
 	os.WriteFile(filepath.Join(tempDir, "build", "app.js"), []byte("js"), 0644)
@@ -52,17 +52,17 @@ func setupTestDir(t *testing.T) string {
 	return tempDir
 }
 
-// 通过程序逻辑集成测试不同类型的输出
+// Integration test for different output types
 func TestIntegration(t *testing.T) {
 	testDir := setupTestDir(t)
 	defer os.RemoveAll(testDir)
 
-	// 确保工作目录正确
+	// Ensure working directory is correct
 	oldWd, _ := os.Getwd()
 	os.Chdir(testDir)
 	defer os.Chdir(oldWd)
 
-	// 测试场景
+	// Test scenarios
 	testCases := []struct {
 		name       string
 		filter     *Filter
@@ -78,9 +78,9 @@ func TestIntegration(t *testing.T) {
 			dirsOnly:   false,
 			maxDepth:   0,
 			checkFunc: func(node *TreeNode) bool {
-				// 检查所有文件和目录都包括在内
+				// Check if all files and directories are included
 				allNodes := node.getAllNodes()
-				return len(allNodes) >= 10 // 根 + 至少9个子节点
+				return len(allNodes) >= 10 // root + at least 9 child nodes
 			},
 		},
 		{
@@ -90,7 +90,7 @@ func TestIntegration(t *testing.T) {
 			dirsOnly:   false,
 			maxDepth:   0,
 			checkFunc: func(node *TreeNode) bool {
-				// 检查隐藏文件是否被过滤
+				// Check if hidden files are filtered
 				for _, child := range node.Children {
 					if child.Name == ".hidden_dir" || child.Name == ".hidden_file" {
 						return false
@@ -106,7 +106,7 @@ func TestIntegration(t *testing.T) {
 			dirsOnly:   true,
 			maxDepth:   0,
 			checkFunc: func(node *TreeNode) bool {
-				// 检查是否只包含目录
+				// Check if only directories are included
 				for _, child := range allChildrenRecursive(node) {
 					if !child.IsDir {
 						return false
@@ -122,14 +122,14 @@ func TestIntegration(t *testing.T) {
 			dirsOnly:   false,
 			maxDepth:   1,
 			checkFunc: func(node *TreeNode) bool {
-				// 检查深度是否受限
+				// Check if depth is limited
 				maxFoundDepth := 0
 				for _, n := range allChildrenRecursive(node) {
 					if n.Depth > maxFoundDepth {
 						maxFoundDepth = n.Depth
 					}
 				}
-				return maxFoundDepth <= 1 // 深度应该不超过1
+				return maxFoundDepth <= 1 // depth should not exceed 1
 			},
 		},
 		{
@@ -139,7 +139,7 @@ func TestIntegration(t *testing.T) {
 			dirsOnly:   false,
 			maxDepth:   0,
 			checkFunc: func(node *TreeNode) bool {
-				// 检查排除规则是否生效
+				// Check if exclude rules are effective
 				for _, child := range node.Children {
 					if child.Name == "log.log" || child.Name == "build" {
 						return false
@@ -155,7 +155,7 @@ func TestIntegration(t *testing.T) {
 			dirsOnly:   false,
 			maxDepth:   0,
 			checkFunc: func(node *TreeNode) bool {
-				// 检查.gitignore规则是否生效
+				// Check if .gitignore rules are effective
 				for _, child := range node.Children {
 					if child.Name == "log.log" || child.Name == "build" {
 						return false
@@ -177,7 +177,7 @@ func TestIntegration(t *testing.T) {
 				t.Errorf("%s: Check failed", tc.name)
 			}
 
-			// 测试各种输出格式
+			// Test various output formats
 			_ = node.ToTreeString(true, "", false)
 			_ = node.ToIndentString(2, false)
 			_ = node.ToMarkdownString(0, false)
@@ -186,7 +186,7 @@ func TestIntegration(t *testing.T) {
 	}
 }
 
-// 递归获取所有子节点
+// Get all child nodes recursively
 func allChildrenRecursive(node *TreeNode) []*TreeNode {
 	var result []*TreeNode
 	for _, child := range node.Children {

@@ -6,7 +6,7 @@ import (
 )
 
 func createTestTree() *TreeNode {
-	// 创建一个简单的测试树结构
+	// Create a simple test tree structure
 	root := &TreeNode{
 		Name:  "root",
 		IsDir: true,
@@ -31,7 +31,7 @@ func createTestTree() *TreeNode {
 		Depth: 2,
 	}
 
-	// 构建树结构
+	// Build tree structure
 	root.Children = append(root.Children, dir1, file1)
 	dir1.Children = append(dir1.Children, file2)
 
@@ -39,10 +39,13 @@ func createTestTree() *TreeNode {
 }
 
 func TestToIndentString(t *testing.T) {
+	// Create a simple test tree structure
 	tree := createTestTree()
-	result := tree.ToIndentString(2, false) // 不使用图标
 
-	// 检查输出是否包含预期的内容
+	// Test without icons
+	result := tree.ToIndentString(2, false) // No icons
+
+	// Check if output contains expected content
 	expectedLines := []string{
 		"root/",
 		"  dir1/",
@@ -56,7 +59,7 @@ func TestToIndentString(t *testing.T) {
 		}
 	}
 
-	// 检查缩进是否正确
+	// Check indentation
 	lines := strings.Split(strings.TrimSpace(result), "\n")
 	if !strings.HasPrefix(lines[1], "  ") {
 		t.Error("dir1 line should have 2 spaces indentation")
@@ -65,7 +68,7 @@ func TestToIndentString(t *testing.T) {
 		t.Error("file2.go line should have 4 spaces indentation")
 	}
 
-	// 检查目录后面是否添加了斜杠
+	// Check if directories have trailing slash
 	if !strings.HasSuffix(lines[0], "/") {
 		t.Error("Root directory should have a trailing slash")
 	}
@@ -82,7 +85,7 @@ func TestToIndentString(t *testing.T) {
 		t.Error("File 'file1.txt' should not have a trailing slash")
 	}
 
-	// 测试图标模式
+	//
 	iconResult := tree.ToIndentString(2, true)
 	if !strings.Contains(iconResult, "📁") {
 		t.Error("Icon mode should display folder icon for directories")
@@ -91,9 +94,9 @@ func TestToIndentString(t *testing.T) {
 
 func TestToTreeString(t *testing.T) {
 	tree := createTestTree()
-	result := tree.ToTreeString(true, "", false) // 不使用图标
+	result := tree.ToTreeString(true, "", false) // No icons
 
-	// 检查输出是否包含预期的内容和树形符号
+	// Check if output contains expected content and tree symbols
 	expectedPatterns := []string{
 		"root/",
 		"├── dir1/",
@@ -107,13 +110,13 @@ func TestToTreeString(t *testing.T) {
 		}
 	}
 
-	// 确保空深度（根节点）不显示前缀符号
+	// Ensure empty depth (root node) doesn't show prefix symbols
 	lines := strings.Split(strings.TrimSpace(result), "\n")
 	if strings.HasPrefix(lines[0], "└── ") {
 		t.Error("Root node should not display prefix symbol")
 	}
 
-	// 检查目录后面是否添加了斜杠
+	// Check if directories have trailing slash
 	for i, line := range lines {
 		if i == 0 && !strings.HasSuffix(line, "/") {
 			t.Error("Root directory should have a trailing slash")
@@ -132,7 +135,7 @@ func TestToTreeString(t *testing.T) {
 		}
 	}
 
-	// 测试图标模式
+	// Test icon mode
 	iconResult := tree.ToTreeString(true, "", true)
 	if !strings.Contains(iconResult, "📁") {
 		t.Error("Icon mode should display folder icon for directories")
@@ -146,7 +149,7 @@ func TestToMarkdownString(t *testing.T) {
 	tree := createTestTree()
 	result := tree.ToMarkdownString(0, false)
 
-	// 检查输出是否包含预期的markdown列表格式
+	// Check if output contains expected markdown list format
 	expectedPatterns := []string{
 		"- root/",
 		"  - dir1/",
@@ -160,12 +163,12 @@ func TestToMarkdownString(t *testing.T) {
 		}
 	}
 
-	// 确保目录有斜杠
+	// Ensure directories have trailing slash
 	if !strings.Contains(result, "root/") || !strings.Contains(result, "dir1/") {
 		t.Error("Directory names should have trailing slashes")
 	}
 
-	// 确保文件没有斜杠
+	// Ensure files don't have trailing slash
 	if strings.Contains(result, "file1.txt/") || strings.Contains(result, "file2.go/") {
 		t.Error("File names should not have trailing slashes")
 	}
@@ -175,7 +178,7 @@ func TestToMermaidString(t *testing.T) {
 	tree := createTestTree()
 	result := tree.ToMermaidString()
 
-	// 检查mermaid输出格式是否正确
+	// Check if mermaid output format is correct
 	expectedPatterns := []string{
 		"graph TD",
 		"N1[root/]",
@@ -193,7 +196,7 @@ func TestToMermaidString(t *testing.T) {
 		}
 	}
 
-	// 确保节点ID递增
+	// Ensure node IDs are incremental
 	if !strings.Contains(result, "N1") || !strings.Contains(result, "N2") ||
 		!strings.Contains(result, "N3") || !strings.Contains(result, "N4") {
 		t.Error("Mermaid output should contain incremental node IDs")

@@ -29,9 +29,9 @@ func getRelativePath(absolute string, root string) string {
 }
 
 func getTreeNode(root string, depth int, basePath string, maxDepth int, filter *Filter, hideHidden bool, dirsOnly bool) (*TreeNode, error) {
-	// 检查是否超过最大深度
+	// Check if max depth is exceeded
 	if maxDepth > 0 && depth > maxDepth {
-		// 返回目录本身，但不递归获取其内容
+		// Return directory itself without recursively getting its contents
 		dirName := filepath.Base(strings.TrimSuffix(root, "/"))
 		return &TreeNode{
 			Name:  dirName,
@@ -47,22 +47,22 @@ func getTreeNode(root string, depth int, basePath string, maxDepth int, filter *
 
 	relativeName := getRelativePath(root, basePath)
 
-	// 决定节点名称
+	// Determine node name
 	nodeName := relativeName
 	if depth > 1 {
 		nodeName = filepath.Base(strings.TrimSuffix(root, "/"))
 	}
 
-	// 创建节点
+	// Create node
 	node := TreeNode{
 		Name:  nodeName,
 		IsDir: true,
 		Depth: depth - 1,
 	}
 
-	// 处理子条目
+	// Process child entries
 	for _, entry := range files {
-		// 检查是否是隐藏文件
+		// Check if it's a hidden file
 		if hideHidden && strings.HasPrefix(entry.Name(), ".") {
 			continue
 		}

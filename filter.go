@@ -6,27 +6,24 @@ import (
 )
 
 type Filter struct {
-	dirs      []string
-	suffixes  []string
-	patterns  []string
-	gitignore bool
+	dirNames []string
+	suffixes []string
+	patterns []string
 }
 
-func NewFilter(excludeStr string, useGitIgnore bool) *Filter {
-	f := &Filter{
-		gitignore: useGitIgnore,
-	}
+func NewFilter(excludeRuleStr string, useGitIgnore bool) *Filter {
+	f := &Filter{}
 
-	if excludeStr == "" && !useGitIgnore {
+	if excludeRuleStr == "" && !useGitIgnore {
 		return f
 	}
 
-	if excludeStr != "" {
-		rules := strings.Split(excludeStr, ",")
+	if excludeRuleStr != "" {
+		rules := strings.Split(excludeRuleStr, ",")
 		for _, rule := range rules {
 			rule = strings.TrimSpace(rule)
 			if strings.HasSuffix(rule, "/") {
-				f.dirs = append(f.dirs, strings.TrimSuffix(rule, "/"))
+				f.dirNames = append(f.dirNames, strings.TrimSuffix(rule, "/"))
 			} else if strings.HasPrefix(rule, ".") {
 				f.suffixes = append(f.suffixes, rule)
 			} else {
@@ -46,27 +43,27 @@ func (f *Filter) loadGitIgnorePatterns() {
 	gitignorePath := ".gitignore"
 	content, err := os.ReadFile(gitignorePath)
 	if err != nil {
-		// 如果 .gitignore 不存在，忽略错误
+		// If .gitignore doesn't exist, ignore the error
 		return
 	}
 
 	lines := strings.Split(string(content), "\n")
 	for _, line := range lines {
 		line = strings.TrimSpace(line)
-		// 跳过空行和注释
+		// Skip empty lines and comments
 		if line == "" || strings.HasPrefix(line, "#") {
 			continue
 		}
 
-		// 处理 .gitignore 规则
+		// Process .gitignore rules
 		if strings.HasSuffix(line, "/") {
-			// 目录规则
-			f.dirs = append(f.dirs, strings.TrimSuffix(line, "/"))
+			// Directory rule
+			f.dirNames = append(f.dirNames, strings.TrimSuffix(line, "/"))
 		} else if strings.HasPrefix(line, "*.") {
-			// 后缀规则，如 *.txt
+			// Suffix rule, e.g. *.txt
 			f.suffixes = append(f.suffixes, strings.TrimPrefix(line, "*"))
 		} else {
-			// 其他模式
+			// Other patterns
 			f.patterns = append(f.patterns, line)
 		}
 	}
@@ -74,7 +71,7 @@ func (f *Filter) loadGitIgnorePatterns() {
 
 func (f *Filter) shouldExclude(name string, isDir bool, path string) bool {
 	if isDir {
-		for _, dir := range f.dirs {
+		for _, dir := range f.dirNames {
 			if matchPattern(name, dir) {
 				return true
 			}
@@ -87,7 +84,7 @@ func (f *Filter) shouldExclude(name string, isDir bool, path string) bool {
 		}
 	}
 
-	// 检查通用模式
+	// Check general patterns
 	for _, pattern := range f.patterns {
 		if matchPattern(path, pattern) || matchPattern(name, pattern) {
 			return true
@@ -97,19 +94,19 @@ func (f *Filter) shouldExclude(name string, isDir bool, path string) bool {
 	return false
 }
 
-// 简单的通配符匹配
+// Simple wildcard matching
 func matchPattern(name, pattern string) bool {
-	// 完全匹配
+	// Exact match
 	if pattern == name {
 		return true
 	}
 
-	// 前缀星号: *suffix
+	// Prefix star: *suffix
 	if strings.HasPrefix(pattern, "*") && strings.HasSuffix(name, strings.TrimPrefix(pattern, "*")) {
 		return true
 	}
 
-	// 后缀星号: prefix*
+	// Suffix star: prefix*
 	if strings.HasSuffix(pattern, "*") && strings.HasPrefix(name, strings.TrimSuffix(pattern, "*")) {
 		return true
 	}

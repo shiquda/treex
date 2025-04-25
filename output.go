@@ -6,64 +6,64 @@ import (
 	"strings"
 )
 
-// 获取文件类型图标
+// Get file type icon
 func getFileIcon(name string, isDir bool) string {
 	if isDir {
-		return "📁 " // 文件夹图标
+		return "📁 " // Folder icon
 	}
 
 	extension := strings.ToLower(filepath.Ext(name))
 	switch extension {
 	case ".go":
-		return "🔹 " // Go 文件
+		return "🔹 " // Go file
 	case ".py":
-		return "🐍 " // Python 文件
+		return "🐍 " // Python file
 	case ".js", ".jsx", ".ts", ".tsx":
-		return "📜 " // JavaScript/TypeScript 文件
+		return "📜 " // JavaScript/TypeScript file
 	case ".html", ".htm":
-		return "🌐 " // HTML 文件
+		return "🌐 " // HTML file
 	case ".css":
-		return "🎨 " // CSS 文件
+		return "🎨 " // CSS file
 	case ".md":
-		return "📝 " // Markdown 文件
+		return "📝 " // Markdown file
 	case ".json":
-		return "📋 " // JSON 文件
+		return "📋 " // JSON file
 	case ".xml":
-		return "📋 " // XML 文件
+		return "📋 " // XML file
 	case ".yml", ".yaml":
-		return "⚙️ " // YAML 文件
+		return "⚙️ " // YAML file
 	case ".txt":
-		return "📄 " // 纯文本文件
+		return "📄 " // Plain text file
 	case ".png", ".jpg", ".jpeg", ".gif", ".bmp", ".svg":
-		return "🖼️ " // 图片文件
+		return "🖼️ " // Image file
 	case ".mp3", ".wav", ".ogg":
-		return "🎵 " // 音频文件
+		return "🎵 " // Audio file
 	case ".mp4", ".avi", ".mkv", ".mov":
-		return "🎬 " // 视频文件
+		return "🎬 " // Video file
 	case ".pdf":
-		return "📕 " // PDF 文件
+		return "📕 " // PDF file
 	case ".zip", ".tar", ".gz", ".7z", ".rar":
-		return "📦 " // 压缩文件
+		return "📦 " // Archive file
 	case ".exe", ".dll":
-		return "⚡ " // 可执行文件
+		return "⚡ " // Executable file
 	case ".sh", ".bash", ".zsh", ".ps1":
-		return "⚙️ " // 脚本文件
+		return "⚙️ " // Script file
 	case ".c", ".cpp", ".h", ".hpp":
-		return "🔧 " // C/C++ 文件
+		return "🔧 " // C/C++ file
 	case ".java":
-		return "☕ " // Java 文件
+		return "☕ " // Java file
 	case ".rb":
-		return "💎 " // Ruby 文件
+		return "💎 " // Ruby file
 	case ".php":
-		return "🐘 " // PHP 文件
+		return "🐘 " // PHP file
 	case ".rs":
-		return "🦀 " // Rust 文件
+		return "🦀 " // Rust file
 	case ".sql":
-		return "🗄️ " // SQL 文件
+		return "🗄️ " // SQL file
 	case ".gitignore", ".dockerignore":
-		return "🔒 " // 忽略文件
+		return "🔒 " // Ignore file
 	default:
-		return "📄 " // 默认为普通文件
+		return "📄 " // Default file icon
 	}
 }
 
@@ -78,7 +78,6 @@ func (t *TreeNode) getEntryString(useIcons bool) string {
 	return s
 }
 
-// 缩进格式输出
 func (t *TreeNode) ToIndentString(spaces int, useIcons bool) string {
 	var result string
 	for i := 0; i < t.Depth*spaces; i++ {
@@ -93,11 +92,11 @@ func (t *TreeNode) ToIndentString(spaces int, useIcons bool) string {
 	return result
 }
 
-// 树形结构输出
 func (t *TreeNode) ToTreeString(isLast bool, prefix string, useIcons bool) string {
 	var result string
-	// current node prefix
 	currentPrefix := prefix
+
+	// current node prefix
 	if t.Depth > 0 {
 		if isLast {
 			currentPrefix += "└── "
@@ -127,51 +126,44 @@ func (t *TreeNode) ToTreeString(isLast bool, prefix string, useIcons bool) strin
 	return result
 }
 
-// Markdown格式输出
 func (t *TreeNode) ToMarkdownString(level int, useIcons bool) string {
 	var result string
-	// 添加缩进
-	for i := 0; i < level; i++ {
-		result += "  "
-	}
-	// 添加列表标记
+	result += strings.Repeat("  ", level)
+
 	result += "- "
 	result += t.getEntryString(useIcons)
 	result += "\n"
 
-	// 处理子节点
+	// Process child nodes
 	for _, child := range t.Children {
 		result += child.ToMarkdownString(level+1, useIcons)
 	}
 	return result
 }
 
-// Mermaid图表格式输出
 func (t *TreeNode) ToMermaidString() string {
 	var result string
-	result += "graph TD\n"
+	result += "graph TD\n" // Mermaid graph directive
 	result += t.toMermaidNodes("", 1)
 	return result
 }
 
-// 生成Mermaid节点
 func (t *TreeNode) toMermaidNodes(parentID string, nodeID int) string {
 	var result string
 	currentID := fmt.Sprintf("N%d", nodeID)
 
-	// 添加当前节点
+	// Add current node
 	if t.IsDir {
 		result += fmt.Sprintf("    %s[%s/]\n", currentID, t.Name)
 	} else {
 		result += fmt.Sprintf("    %s[%s]\n", currentID, t.Name)
 	}
 
-	// 如果不是根节点，添加与父节点的连接
 	if parentID != "" {
 		result += fmt.Sprintf("    %s --> %s\n", parentID, currentID)
 	}
 
-	// 处理子节点
+	// Process child nodes
 	childID := nodeID + 1
 	for _, child := range t.Children {
 		result += child.toMermaidNodes(currentID, childID)

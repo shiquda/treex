@@ -27,8 +27,8 @@ func TestGetRelativePath(t *testing.T) {
 	}
 }
 
-func TestTreeNodeGetAllNodes(t *testing.T) {
-	// 创建一个测试树
+func TestTreeNode(t *testing.T) {
+	// Create a test tree
 	root := &TreeNode{
 		Name:  "root",
 		IsDir: true,
@@ -53,17 +53,17 @@ func TestTreeNodeGetAllNodes(t *testing.T) {
 		Depth: 2,
 	}
 
-	// 构建树结构
+	// Build tree structure
 	root.Children = append(root.Children, child1, child2)
 	child1.Children = append(child1.Children, grandchild1)
 
-	// 测试节点计数
+	// Test node count
 	nodes := root.getAllNodes()
 	if len(nodes) != 4 {
 		t.Errorf("Expected 4 nodes, but got %d", len(nodes))
 	}
 
-	// 测试特定节点是否在结果中
+	// Test specific node presence in result
 	found := false
 	for _, node := range nodes {
 		if node.Name == "grandchild1" {
@@ -77,61 +77,61 @@ func TestTreeNodeGetAllNodes(t *testing.T) {
 }
 
 func TestGetTreeNode(t *testing.T) {
-	// 创建测试目录结构
+	// Create test directory structure
 	testDir := "test_dir_structure"
 	defer os.RemoveAll(testDir)
 
-	// 创建目录结构
+	// Create directory structure
 	os.MkdirAll(filepath.Join(testDir, "dir1", "subdir"), 0755)
 	os.MkdirAll(filepath.Join(testDir, "dir2"), 0755)
 	os.MkdirAll(filepath.Join(testDir, ".hidden_dir"), 0755)
 
-	// 创建一些文件
+	// Create some files
 	os.WriteFile(filepath.Join(testDir, "file1.txt"), []byte("test"), 0644)
 	os.WriteFile(filepath.Join(testDir, "dir1", "file2.txt"), []byte("test"), 0644)
 	os.WriteFile(filepath.Join(testDir, ".hidden_file"), []byte("test"), 0644)
 
-	// 获取当前工作目录用作basePath
+	// Get current working directory as basePath
 	cwd, err := os.Getwd()
 	if err != nil {
 		t.Fatal("Failed to get current working directory")
 	}
 
-	// 测试基本树生成
+	// Test basic tree generation
 	filter := NewFilter("", false)
 	node, err := getTreeNode(testDir, 1, cwd, 0, filter, false, false)
 	if err != nil {
 		t.Fatalf("getTreeNode error: %v", err)
 	}
 
-	// 检查根节点
+	// Check root node
 	if node.Name != testDir || !node.IsDir {
 		t.Errorf("Root node error: name=%s, isDir=%v", node.Name, node.IsDir)
 	}
 
-	// 检查子节点数（应该包含5个：dir1, dir2, .hidden_dir, file1.txt, .hidden_file）
+	// Check child node count (should include 5: dir1, dir2, .hidden_dir, file1.txt, .hidden_file)
 	if len(node.Children) != 5 {
 		t.Errorf("Expected 5 child nodes, but got %d", len(node.Children))
 	}
 
-	// 测试隐藏文件过滤
+	// Test hidden file filtering
 	node, err = getTreeNode(testDir, 1, cwd, 0, filter, true, false)
 	if err != nil {
 		t.Fatalf("getTreeNode error: %v", err)
 	}
 
-	// 检查子节点数（应该排除了.hidden_dir和.hidden_file）
+	// Check child node count (should exclude .hidden_dir and .hidden_file)
 	if len(node.Children) != 3 {
 		t.Errorf("Expected 3 child nodes after filtering hidden files, but got %d", len(node.Children))
 	}
 
-	// 测试最大深度
+	// Test maximum depth
 	node, err = getTreeNode(testDir, 1, cwd, 1, filter, false, false)
 	if err != nil {
 		t.Fatalf("getTreeNode error: %v", err)
 	}
 
-	// 找到dir1节点
+	// Find dir1 node
 	var dir1Node *TreeNode
 	for _, child := range node.Children {
 		if child.Name == "dir1" && child.IsDir {
@@ -144,18 +144,18 @@ func TestGetTreeNode(t *testing.T) {
 		t.Fatal("Did not find dir1 node")
 	}
 
-	// 检查dir1节点的子节点数是否为0（由于深度限制）
+	// Check if dir1 node has no children (due to depth limit)
 	if len(dir1Node.Children) != 0 {
 		t.Errorf("With depth limit 1, dir1 should have no children, but got %d", len(dir1Node.Children))
 	}
 
-	// 测试只包含目录
+	// Test only directories
 	node, err = getTreeNode(testDir, 1, cwd, 0, filter, false, true)
 	if err != nil {
 		t.Fatalf("getTreeNode error: %v", err)
 	}
 
-	// 检查是否只包含目录
+	// Check if only directories are included
 	for _, child := range node.Children {
 		if !child.IsDir {
 			t.Errorf("In dirs-only mode, node %s should not be a file", child.Name)
