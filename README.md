@@ -372,6 +372,14 @@ treex -CHI -m 3
 
 </details>
 
+## 📝 To Do
+
+- [ ] Support config file, allow user to customize the default output format, filtering options, styles etc.
+- [ ] Better performance for large directory trees
+- [ ] Better way to show file/dir types
+- [ ] Streamline installation process for MacOS & Linux systems(help needed!)
+- [ ] And more! Tell me in issues if you have any ideas.
+
 ## ♥️ Contribution
 
 The project is in its early stages of development. All contributions are welcome, including raising issues, submitting pull requests, or giving the project a ⭐ star on GitHub!
