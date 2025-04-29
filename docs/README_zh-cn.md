@@ -39,6 +39,13 @@ Treex 是一款强大的命令行工具，能够以多种格式展示目录结�
 go install github.com/shiquda/treex@latest
 ```
 
+如果你是Windows用户，可以使用[scoop](https://scoop.sh/scoop)安装treex：
+
+```bash
+scoop bucket add extras
+scoop install treex
+```
+
 ## 📖 使用指南
 
 基础用法：

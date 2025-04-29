@@ -39,6 +39,13 @@ Or, if you want to build it yourself with Go:
 go install github.com/shiquda/treex@latest
 ```
 
+For windows user, you can use [scoop](https://scoop.sh/scoop) to install treex:
+
+```bash
+scoop bucket add extras
+scoop install treex
+```
+
 ## 📖 Usage
 
 Basic usage:
