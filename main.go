@@ -10,16 +10,19 @@ import (
 )
 
 func main() {
+	cfg := NewDefaultConfig()
+
 	// parse flags
-	dir := flag.StringP("dir", "d", ".", "directory to scan")
-	outputFormat := flag.StringP("format", "f", "tree", "output format. allowed: [indent, tree, md, mermaid]")
-	maxDepth := flag.IntP("max-depth", "m", 0, "maximum directory depth (0 for unlimited)")
-	outputFilePath := flag.StringP("output", "o", "", "output file path (default: stdout)")
-	excludeRuleStr := flag.StringP("exclude", "e", "", "exclude rules (comma-separated, e.g. 'dir/, .txt')")
-	hideHidden := flag.BoolP("hide-hidden", "H", false, "hide hidden files and directories (default: false)")
-	dirsOnly := flag.BoolP("dirs-only", "D", false, "show directories only (default: false)")
-	useGitIgnore := flag.BoolP("use-gitignore", "I", false, "use .gitignore patterns to exclude files/directories (default: false)")
-	useIcons := flag.BoolP("icons", "C", false, "display file type icons (default: false)")
+	cfg.Dir = *flag.StringP("dir", "d", ".", "directory to scan")
+	cfg.OutputFormat = *flag.StringP("format", "f", "tree", "output format. allowed: [indent, tree, md, mermaid]")
+	cfg.MaxDepth = *flag.IntP("max-depth", "m", 0, "maximum directory depth (0 for unlimited)")
+	cfg.OutputFilePath = *flag.StringP("output", "o", "", "output file path (default: stdout)")
+	cfg.ExcludeRuleStr = *flag.StringP("exclude", "e", "", "exclude rules (comma-separated, e.g. 'dir/, .txt')")
+	cfg.HideHidden = *flag.BoolP("hide-hidden", "H", false, "hide hidden files and directories (default: false)")
+	cfg.DirsOnly = *flag.BoolP("dirs-only", "D", false, "show directories only (default: false)")
+	cfg.UseGitIgnore = *flag.BoolP("use-gitignore", "I", false, "use .gitignore patterns to exclude files/directories (default: false)")
+	cfg.UseIcons = *flag.BoolP("icons", "C", false, "display file type icons (default: false)")
+
 	flag.Parse()
 
 	// get the absolute path and ensure it ends with "/"
@@ -33,8 +36,8 @@ func main() {
 	}
 
 	// filters
-	filter := NewFilter(*excludeRuleStr, *useGitIgnore)
-	node, err := getTreeNode(*dir, 1, absolutePath, *maxDepth, filter, *hideHidden, *dirsOnly)
+	filter := NewFilter(cfg.ExcludeRuleStr, cfg.UseGitIgnore)
+	node, err := getTreeNode(cfg.Dir, 1, absolutePath, *maxDepth, filter, *hideHidden, *dirsOnly)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "error: %s\n", err)
 		flag.Usage()
