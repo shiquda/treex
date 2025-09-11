@@ -18,16 +18,25 @@ Treex is a powerful command-line tool for displaying directory structures in dif
   - 📑 `indent`: Indented list format
   - 📝 `md`: Markdown format
   - 📊 `mermaid`: Mermaid format
+  - 🔗 `json`: JSON format
+  - 📊 `csv`: CSV format
 - 🔍 Flexible filtering options:
   - 🕵️ `-H`: Hide hidden files and directories
   - 📁 `-D`: Show directories only
   - 🚫 `-e <rules>`: Exclude specific directories or file extensions
   - 📝 `-I`: Automatically apply .gitignore rules
 - 🛠️ Customizable output:
-  - 📏 `-m <depth>`: Control directory depth
+  - 📏 `-m <depth>` or `-L <depth>`: Control directory depth
   - 💾 `-o <path>`: Save output to a file
   - 🎯 `-f <format>`: Select output format
   - ⭐ `-C`: Show icons for files (via emoji)
+- 📊 File metadata display:
+  - 📏 `-s`: Show file sizes (human-readable format)
+  - 👤 `-O`: Show file owners
+  - 🕐 `-M`: Show file modification times
+- 🔧 Enhanced compatibility:
+  - 🌍 Improved Windows pipe support with UTF-8 encoding
+  - 🎯 `-L` as alias for `-m` for better tree command compatibility
 
 ## 📦 Installation
 
@@ -69,8 +78,12 @@ All command-line options are listed in the table below:
 | Short Option | Long Option    | Argument            | Description                                                                 | Default Value |
 |--------------|----------------|---------------------|-----------------------------------------------------------------------------|---------------|
 | `-d`         | `--dir`        | `<directory>`       | Directory to scan                                                           | `.`           |
-| `-f`         | `--format`     | `<format>`          | Output format (`tree`, `indent`, `md`, `mermaid`)                           | `tree`        |
+| `-f`         | `--format`     | `<format>`          | Output format (`tree`, `indent`, `md`, `mermaid`, `json`, `csv`)           | `tree`        |
 | `-m`         | `--max-depth`  | `<number>`          | Maximum directory depth (0 for unlimited)                                  | -             |
+| `-L`         | `--level`      | `<number>`          | Maximum directory depth (0 for unlimited, alias for `-m`)                   | -             |
+| `-s`         | `--size`       | -                   | Show file sizes (human-readable format)                                    | false         |
+| `-O`         | `--owner`      | -                   | Show file owners                                                            | false         |
+| `-M`         | `--modtime`    | -                   | Show file modification times                                                | false         |
 | `-o`         | `--output`     | `<filepath>`        | Path to output file                                                         | stdout        |
 | `-e`         | `--exclude`    | `<rules>`           | Exclude rules (comma-separated: `dir/` for dirs, `.ext` for extensions)     | -             |
 | `-H`         | `--hide-hidden` | -                   | Hide hidden files and directories                                           | false         |
@@ -84,6 +97,8 @@ Format options details:
 - `indent`: Indented list format
 - `md`: Markdown format
 - `mermaid`: Mermaid format for diagrams
+- `json`: JSON format with structured data
+- `csv`: CSV format for spreadsheet applications
 
 Exclude rules format:
 
@@ -368,6 +383,58 @@ treex -CHI -m 3
 ├── 📋 tsconfig.node.json
 ├── 📋 tsconfig.web.json
 └── 📄 yarn.lock
+```
+
+</details>
+
+7. Show file metadata with JSON output:
+
+```bash
+treex -sM -f json -o structure.json
+```
+
+- `-s`: Show file sizes
+- `-M`: Show modification times
+- `-f json`: Output in JSON format
+- `-o structure.json`: Save to structure.json file
+
+<details>
+
+<summary>Result:</summary>
+
+```json
+{
+  "name": "./",
+  "isDir": true,
+  "depth": 0,
+  "size": 4096,
+  "modTime": "2024-01-15 10:30:00",
+  "children": [
+    {
+      "name": "README.md",
+      "isDir": false,
+      "depth": 1,
+      "size": 11764,
+      "modTime": "2024-01-15 10:30:00"
+    },
+    {
+      "name": "src",
+      "isDir": true,
+      "depth": 1,
+      "size": 4096,
+      "modTime": "2024-01-15 10:30:00",
+      "children": [
+        {
+          "name": "main.go",
+          "isDir": false,
+          "depth": 2,
+          "size": 3720,
+          "modTime": "2024-01-15 10:30:00"
+        }
+      ]
+    }
+  ]
+}
 ```
 
 </details>

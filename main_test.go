@@ -178,10 +178,10 @@ func TestIntegration(t *testing.T) {
 			}
 
 			// Test various output formats
-			_ = node.ToTreeString(true, "", false)
-			_ = node.ToIndentString(2, false)
-			_ = node.ToMarkdownString(0, false)
-			_ = node.ToMermaidString()
+			_ = node.ToTreeString(true, "", false, false, false, false)
+			_ = node.ToIndentString(2, false, false, false, false)
+			_ = node.ToMarkdownString(0, false, false, false, false)
+			_ = node.ToMermaidString(false, false, false)
 		})
 	}
 }

@@ -43,7 +43,7 @@ func TestToIndentString(t *testing.T) {
 	tree := createTestTree()
 
 	// Test without icons
-	result := tree.ToIndentString(2, false) // No icons
+	result := tree.ToIndentString(2, false, false, false, false) // No icons
 
 	// Check if output contains expected content
 	expectedLines := []string{

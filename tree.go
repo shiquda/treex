@@ -4,6 +4,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 )
 
 type TreeNode struct {
@@ -11,6 +12,9 @@ type TreeNode struct {
 	IsDir    bool
 	Children []*TreeNode
 	Depth    int
+	Size     int64
+	Owner    string
+	ModTime  time.Time
 }
 
 func getRelativePath(absolute string, root string) string {
@@ -28,15 +32,43 @@ func getRelativePath(absolute string, root string) string {
 	return relativePath
 }
 
+func getFileMetadata(root string, entry os.DirEntry) (int64, string, time.Time, error) {
+	var size int64
+	var modTime time.Time
+	var owner string
+
+	info, err := entry.Info()
+	if err != nil {
+		return 0, "", time.Time{}, err
+	}
+
+	size = info.Size()
+	modTime = info.ModTime()
+
+	// Owner information is complex across platforms, so we'll leave it empty for now
+	owner = ""
+
+	return size, owner, modTime, nil
+}
+
 func getTreeNode(root string, depth int, basePath string, maxDepth int, filter *Filter, hideHidden bool, dirsOnly bool) (*TreeNode, error) {
 	// Check if max depth is exceeded
 	if maxDepth > 0 && depth > maxDepth {
 		// Return directory itself without recursively getting its contents
 		dirName := filepath.Base(strings.TrimSuffix(root, "/"))
+		
+		// Get directory metadata for depth-limited directories
+		dirInfo, err := os.Stat(root)
+		if err != nil {
+			return nil, err
+		}
+		
 		return &TreeNode{
-			Name:  dirName,
-			IsDir: true,
-			Depth: depth - 1,
+			Name:    dirName,
+			IsDir:   true,
+			Depth:   depth - 1,
+			Size:    dirInfo.Size(),
+			ModTime: dirInfo.ModTime(),
 		}, nil
 	}
 
@@ -53,11 +85,19 @@ func getTreeNode(root string, depth int, basePath string, maxDepth int, filter *
 		nodeName = filepath.Base(strings.TrimSuffix(root, "/"))
 	}
 
-	// Create node
+	// Create node for directory
+	// Get directory metadata
+	dirInfo, err := os.Stat(root)
+	if err != nil {
+		return nil, err
+	}
+
 	node := TreeNode{
-		Name:  nodeName,
-		IsDir: true,
-		Depth: depth - 1,
+		Name:    nodeName,
+		IsDir:   true,
+		Depth:   depth - 1,
+		Size:    dirInfo.Size(),
+		ModTime: dirInfo.ModTime(),
 	}
 
 	// Process child entries
@@ -87,10 +127,19 @@ func getTreeNode(root string, depth int, basePath string, maxDepth int, filter *
 				node.Children = append(node.Children, child)
 			}
 		} else if !dirsOnly {
+			fullChildPath := root + "/" + entry.Name()
+			size, owner, modTime, err := getFileMetadata(fullChildPath, entry)
+			if err != nil {
+				return nil, err
+			}
+			
 			child := &TreeNode{
-				Name:  entry.Name(),
-				IsDir: false,
-				Depth: depth,
+				Name:    entry.Name(),
+				IsDir:   false,
+				Depth:   depth,
+				Size:    size,
+				Owner:   owner,
+				ModTime: modTime,
 			}
 			node.Children = append(node.Children, child)
 		}
